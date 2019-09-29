@@ -10,6 +10,8 @@ public class StaticShader extends ShaderProgram {
     private static final String FRAGMENT_SHADER = OFF + "fragmentShader.fs";
 
     private int transformationVariable;
+    private int perspectiveVariable;
+    private int cameraVariable;
 
     public StaticShader(){
         super(VERTEX_SHADER, FRAGMENT_SHADER);
@@ -26,9 +28,17 @@ public class StaticShader extends ShaderProgram {
     @Override
     protected void getVarLocations() {
         transformationVariable = super.getVarLocation("transformation");
+        perspectiveVariable = super.getVarLocation("perspective");
+        cameraVariable = super.getVarLocation("camera");
     }
 
     public void loadTransformation(Matrix4 matrix){
         super.loadMatrix4(transformationVariable, matrix);
+    }
+    public void loadPerspective(Matrix4 perspective){
+        super.loadMatrix4(perspectiveVariable, perspective);
+    }
+    public void loadCamera(Matrix4 camera){
+        super.loadMatrix4(cameraVariable, camera);
     }
 }

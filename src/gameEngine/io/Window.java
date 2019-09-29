@@ -100,7 +100,6 @@ public class Window {
         if(wasResized){
             GL46.glViewport(0, 0, width, height);
             wasResized = false;
-            System.out.println("Resized");
         }
     }
 

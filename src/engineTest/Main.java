@@ -19,23 +19,47 @@ import org.lwjgl.opengl.GL46;
 public class Main {
     static Window window;
 
-    public static void loop(MeshPart part){
-        part.setPosition(new Vector3(
-                (window.input.getMousePos().X - window.getWidth()/2f)/window.getWidth()*2,
-                -(window.input.getMousePos().Y - window.getHeight()/2f)/window.getHeight()*2,
+    public static void loop(MeshPart part, Camera camera){
+        Vector3 rotation = new Vector3(
+                -(window.input.getMousePos().Y - window.getHeight()/2f)/window.getHeight() * 360,
+                -(window.input.getMousePos().X - window.getWidth()/2f)/window.getWidth() * 360 ,
                 0
-        ));
+        );
 
-        if(window.input.processKey(GLFW.GLFW_KEY_A, 1000)){
-            Debug.print("A down " + window.input.getMousePos());
+        camera.setEulerRotation(rotation);
+
+        float speed = 0.01f;
+
+        Vector3 velocity = new Vector3();
+
+        if(window.input.isKeyDown(GLFW.GLFW_KEY_W)){
+            velocity.Z += speed;
         }
+        if(window.input.isKeyDown(GLFW.GLFW_KEY_S)){
+            velocity.Z -= speed;
+        }
+        if(window.input.isKeyDown(GLFW.GLFW_KEY_A)){
+            velocity.X += speed;
+        }
+        if(window.input.isKeyDown(GLFW.GLFW_KEY_D)){
+            velocity.X -= speed;
+        }
+        if(window.input.isKeyDown(GLFW.GLFW_KEY_Q)){
+            velocity.Y += speed;
+        }
+        if(window.input.isKeyDown(GLFW.GLFW_KEY_E)){
+            velocity.Y -= speed;
+        }
+
+        camera.translateLocally(velocity);
+
         if(window.input.processKey(GLFW.GLFW_KEY_ESCAPE, 1)){
             window.close();
         }
     }
 
     public static void main(String[] argv){
-        window = new Window(800, 600, "Bruh");
+        window = new Window(800, 600, "windows 11");
         window.initialize();
 
         Vertex[] vertices = {
@@ -58,21 +82,25 @@ public class Main {
         ModelTexture texture = new ModelTexture(loader.loadTexture("res/beautiful.jpg", GL46.GL_LINEAR));
 
         MeshPart beautifulMesh = new MeshPart(rectangle, texture);
+        MeshPart beautifulMesh2 = new MeshPart(rectangle, texture);
         Camera primaryCamera = new Camera(70f);
+        primaryCamera.setWindow(window);
 
-        beautifulMesh.setPosition(new Vector3(-1, 0, 0));
+        beautifulMesh2.setPosition(new Vector3(-1f, 0f, -1f));
 
         while(!window.shouldClose()){
-            //beautifulMesh.translate(new Vector3(0.002f, 0, 0));
-            beautifulMesh.rotate(new Vector3(0.2f, 1f, 0.3f));
+            //beautifulMesh2.translate(new Vector3(0.002f, 0, 0));
+            //beautifulMesh.rotate(new Vector3(0.2f, 1f, 0.3f));
+            //beautifulMesh2.rotate(new Vector3(0f, 1f, -0.08f));
             renderer.prepare();
 
             shader.start();
-            renderer.render(beautifulMesh, shader);
+            renderer.render(beautifulMesh, shader, primaryCamera);
+            renderer.render(beautifulMesh2, shader, primaryCamera);
             shader.stop();
 
             window.update();
-            loop(beautifulMesh);
+            loop(beautifulMesh, primaryCamera);
         }
 
         loader.free();

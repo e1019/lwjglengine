@@ -3,6 +3,7 @@ package gameEngine.renderer;
 import gameEngine.math.Color3;
 import gameEngine.math.Matrix4;
 import gameEngine.renderer.models.RawModel;
+import gameEngine.renderer.objects.Camera;
 import gameEngine.renderer.objects.MeshPart;
 import gameEngine.renderer.shader.StaticShader;
 import gameEngine.renderer.textures.ModelTexture;
@@ -15,7 +16,8 @@ public class Renderer {
     }
 
     public void prepare(){
-        GL46.glClear(GL46.GL_COLOR_BUFFER_BIT);
+        GL46.glEnable(GL46.GL_DEPTH_TEST);
+        GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT);
         GL46.glClearColor(bg.R, bg.G, bg.B, 1.0f);
     }
 
@@ -31,7 +33,7 @@ public class Renderer {
 
     }
 
-    public void render(MeshPart mesh, StaticShader shader){
+    public void render(MeshPart mesh, StaticShader shader, Camera camera){
 
         RawModel model = mesh.getModel();
         ModelTexture texture = mesh.getTexture();
@@ -43,6 +45,8 @@ public class Renderer {
         GL46.glEnableVertexAttribArray(1);
 
         shader.loadTransformation(transformationMatrix);
+        shader.loadPerspective(camera.getPerspective());
+        shader.loadCamera(camera.getViewMatrix());
 
         GL46.glActiveTexture(GL46.GL_TEXTURE0);
 

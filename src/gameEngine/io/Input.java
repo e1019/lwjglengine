@@ -12,8 +12,8 @@ class EngineKeyInput extends GLFWKeyCallback {
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods) {
         if(window != this.input.tgtWindow) return;
-
-        this.input.setKey(key, action == GLFW.GLFW_PRESS ? Integer.MAX_VALUE : Integer.MIN_VALUE);
+        if((action != GLFW.GLFW_RELEASE) && (action != GLFW.GLFW_PRESS)) return;
+        this.input.setKey(key, action != GLFW.GLFW_RELEASE ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     }
 }
 
@@ -26,7 +26,7 @@ class EngineMouseButtonInput extends GLFWMouseButtonCallback {
     @Override
     public void invoke(long window, int button, int action, int mods) {
         if(window != this.input.tgtWindow) return;
-
+        if((action != GLFW.GLFW_RELEASE) && (action != GLFW.GLFW_PRESS)) return;
         this.input.setMouseButton(button, action == GLFW.GLFW_PRESS ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     }
 }

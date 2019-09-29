@@ -80,6 +80,19 @@ public class Matrix4 {
         );
     }
 
+    public void multiplyWith(Matrix4 o){
+        Matrix4 result = multiply(o);
+
+        set(result);
+    }
+
+    public void set(Matrix4 o){
+        this.m00 = o.m00; this.m01 = o.m01; this.m02 = o.m02; this.m03 = o.m03;
+        this.m10 = o.m10; this.m11 = o.m11; this.m12 = o.m12; this.m13 = o.m13;
+        this.m20 = o.m20; this.m21 = o.m21; this.m22 = o.m22; this.m23 = o.m23;
+        this.m30 = o.m30; this.m31 = o.m31; this.m32 = o.m32; this.m33 = o.m33;
+    }
+
     public Matrix4 multiply(float s){
         return new Matrix4(
                 this.m00 * s,   this.m01 * s,   this.m02 * s,   this.m03 * s,
@@ -186,13 +199,25 @@ public class Matrix4 {
     }
 
     public void translate(Vector3 translation){ //TODO: somethings fucked
-        Matrix4 src = this;
-        Matrix4 dest = this;
+        Matrix4 tmp = new Matrix4();
+        tmp.m00 = 1;
+        tmp.m01 = 0;
+        tmp.m02 = 0;
+        tmp.m03 = translation.X;
+        tmp.m10 = 0;
+        tmp.m11 = 1;
+        tmp.m12 = 0;
+        tmp.m13 = translation.Y;
+        tmp.m20 = 0;
+        tmp.m21 = 0;
+        tmp.m22 = 1;
+        tmp.m23 = translation.Z;
+        tmp.m30 = 0;
+        tmp.m31 = 0;
+        tmp.m32 = 0;
+        tmp.m33 = 1;
 
-        dest.m30 += src.m00 * translation.X + src.m10 * translation.Y + src.m20 * translation.Z;
-        dest.m31 += src.m01 * translation.X + src.m11 * translation.Y + src.m21 * translation.Z;
-        dest.m32 += src.m02 * translation.X + src.m12 * translation.Y + src.m22 * translation.Z;
-        dest.m33 += src.m03 * translation.X + src.m13 * translation.Y + src.m23 * translation.Z;
+        multiplyWith(tmp);
     }
 
     public void rotate(float angle, Vector3 axis){ //TODO: somethings fucked here too

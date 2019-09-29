@@ -6,9 +6,11 @@ in vec2 uvCoords;
 out vec2 uvCoordsOut;
 
 uniform mat4 transformation;
+uniform mat4 perspective;
+uniform mat4 camera;
 
 void main(void){
-    gl_Position = transformation * vec4(position, 1.0);
+    gl_Position = perspective * camera * transformation * vec4(position, 2);
 
     uvCoordsOut = uvCoords;
 }
