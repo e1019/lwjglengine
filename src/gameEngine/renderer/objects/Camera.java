@@ -28,13 +28,20 @@ public class Camera extends Object {
         return Matrix4.fromPerspective(FOV, (tgtWindow.getWidth()*1f) / (tgtWindow.getHeight()*1f), minPlane, maxPlane);
     }
 
-
     public Matrix4 getViewMatrix(){
-        Matrix4 viewMatrix = new Matrix4();
-        viewMatrix.rotate((float) Math.toRadians(getEulerRotation().Y), new Vector3(0, 1, 0));
-        viewMatrix.rotate((float) Math.toRadians(getEulerRotation().X), new Vector3(1, 0, 0));
 
-        viewMatrix.translate(getPosition());
+        Matrix4 tmp = new Matrix4();
+        Matrix4 viewMatrix = new Matrix4();
+        viewMatrix.toIdentity();
+
+        Matrix4.RotateY(tmp, (float) Math.toRadians(getEulerRotation().Y));
+        Matrix4.Mul(viewMatrix, viewMatrix, tmp);
+
+        Matrix4.RotateX(tmp, (float) Math.toRadians(getEulerRotation().X));
+        Matrix4.Mul(viewMatrix, viewMatrix, tmp);
+
+        Matrix4.Translate(tmp, getPosition().X, getPosition().Y, getPosition().Z);
+        Matrix4.Mul(viewMatrix, viewMatrix, tmp);
 
         return viewMatrix;
     }

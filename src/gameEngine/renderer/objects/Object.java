@@ -52,13 +52,39 @@ public abstract class Object {
 
 
     public Matrix4 getTransformationMatrix(){
-        return Matrix4.createTransformation(Position, EulerRotation, Scale);
+        Matrix4 tmp = new Matrix4();
+        Matrix4 m = new Matrix4();
+        m.toIdentity();
+
+        Matrix4.Scale(tmp, Scale.X, Scale.Y, Scale.Z);
+        Matrix4.Mul(m, m, tmp);
+        Matrix4.RotateZ(tmp, (float)Math.toRadians(-EulerRotation.Z));
+        Matrix4.Mul(m, m, tmp);
+        Matrix4.RotateX(tmp, (float)Math.toRadians(-EulerRotation.X));
+        Matrix4.Mul(m, m, tmp);
+        Matrix4.RotateY(tmp, (float)Math.toRadians(-EulerRotation.Y));
+        Matrix4.Mul(m, m, tmp);
+        Matrix4.Translate(tmp, Position.X, Position.Y, Position.Z);
+        Matrix4.Mul(m, m, tmp);
+
+        return m;
     }
 
     public Matrix4 getRotationMatrix(){
-        return Matrix4.createTransformation(new Vector3(), EulerRotation, Scale);
-    }
+        Matrix4 tmp = new Matrix4();
+        Matrix4 m = new Matrix4();
+        m.toIdentity();
 
+
+        Matrix4.RotateZ(tmp, (float)Math.toRadians(-EulerRotation.Z));
+        Matrix4.Mul(m, m, tmp);
+        Matrix4.RotateX(tmp, (float)Math.toRadians(-EulerRotation.X));
+        Matrix4.Mul(m, m, tmp);
+        Matrix4.RotateY(tmp, (float)Math.toRadians(-EulerRotation.Y));
+        Matrix4.Mul(m, m, tmp);
+
+        return m;
+    }
 
     public void translate(Vector3 translation) {
         setPosition(Position.add(translation));
