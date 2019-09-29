@@ -33,7 +33,7 @@ public class Renderer {
 
     }
 
-    public void render(MeshPart mesh, StaticShader shader, Camera camera){
+    public void render(MeshPart mesh, StaticShader shader){
 
         RawModel model = mesh.getModel();
         ModelTexture texture = mesh.getTexture();
@@ -45,8 +45,7 @@ public class Renderer {
         GL46.glEnableVertexAttribArray(1);
 
         shader.loadTransformation(transformationMatrix);
-        shader.loadPerspective(camera.getPerspective());
-        shader.loadCamera(camera.getViewMatrix());
+
 
         GL46.glActiveTexture(GL46.GL_TEXTURE0);
 

@@ -25,8 +25,9 @@ public class Camera extends Object {
     }
 
     public Matrix4 getPerspective(){
-        return Matrix4.fromPerspective(FOV, tgtWindow.getWidth() / tgtWindow.getHeight(), minPlane, maxPlane);
+        return Matrix4.fromPerspective(FOV, (tgtWindow.getWidth()*1f) / (tgtWindow.getHeight()*1f), minPlane, maxPlane);
     }
+
 
     public Matrix4 getViewMatrix(){
         Matrix4 viewMatrix = new Matrix4();

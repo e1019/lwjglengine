@@ -3,6 +3,7 @@ package engineTest;
 import gameEngine.io.Debug;
 import gameEngine.io.Window;
 import gameEngine.math.Color3;
+import gameEngine.math.Vector2;
 import gameEngine.math.Vector3;
 import gameEngine.renderer.Loader;
 import gameEngine.renderer.models.RawModel;
@@ -19,14 +20,23 @@ import org.lwjgl.opengl.GL46;
 public class Main {
     static Window window;
 
+
     public static void loop(MeshPart part, Camera camera){
+        Vector2 mouseDelta = window.input.getMouseDelta(true);
+
         Vector3 rotation = new Vector3(
-                -(window.input.getMousePos().Y - window.getHeight()/2f)/window.getHeight() * 360,
-                -(window.input.getMousePos().X - window.getWidth()/2f)/window.getWidth() * 360 ,
+                -mouseDelta.Y/4f,
+                -mouseDelta.X/4f,
                 0
         );
 
-        camera.setEulerRotation(rotation);
+        //rotation.clampBoth();
+
+        camera.rotate(rotation);
+
+        Vector3 eRotation = camera.getEulerRotation();
+        eRotation.clampBoth(new Vector3(90f, Float.MAX_VALUE-1f, Float.MAX_VALUE-1f));
+        camera.setEulerRotation(eRotation);
 
         float speed = 0.01f;
 
@@ -53,50 +63,54 @@ public class Main {
 
         camera.translateLocally(velocity);
 
-        if(window.input.processKey(GLFW.GLFW_KEY_ESCAPE, 1)){
+        /*if(window.input.processKey(GLFW.GLFW_KEY_ESCAPE, 1)){
             window.close();
-        }
+        }*/
     }
 
     public static void main(String[] argv){
         window = new Window(800, 600, "windows 11");
         window.initialize();
 
-        Vertex[] vertices = {
-                new Vertex(-0.5f, 0.5f, 0f, 0.25f, 0.25f),
-                new Vertex(-0.5f, -0.5f, 0f, 0.25f, 0.75f),
-                new Vertex(0.5f, -0.5f, 0f, 0.75f, 0.75f),
-                new Vertex(0.5f, 0.5f, 0f, 0.75f, 0.25f)
-        };
+        Vertex[] cubeVertices = ModelData.getVertices(Cube.vertices, Cube.textureCoords);
+        int[] cubeIndices = Cube.indices;
 
-        int[] indices = {
-                0, 1, 3,
-                3, 1, 2
-        };
-
-        Renderer renderer = new Renderer(Color3.fromRGB(128, 0, 32));
+        Renderer renderer = new Renderer(Color3.fromRGB(125, 192, 216));
         Loader loader = new Loader();
         StaticShader shader = new StaticShader();
 
-        RawModel rectangle = loader.loadToVAO(vertices, indices);
+        RawModel cubeModel = loader.loadToVAO(cubeVertices, cubeIndices);
         ModelTexture texture = new ModelTexture(loader.loadTexture("res/beautiful.jpg", GL46.GL_LINEAR));
+        ModelTexture percy = new ModelTexture(loader.loadTexture("res/percy.jpg", GL46.GL_NEAREST));
 
-        MeshPart beautifulMesh = new MeshPart(rectangle, texture);
-        MeshPart beautifulMesh2 = new MeshPart(rectangle, texture);
+        MeshPart beautifulMesh = new MeshPart(cubeModel, texture);
+        MeshPart beautifulMesh2 = new MeshPart(cubeModel, percy);
+        MeshPart floor = new MeshPart(cubeModel, percy);
         Camera primaryCamera = new Camera(70f);
         primaryCamera.setWindow(window);
 
+        beautifulMesh.setPosition(new Vector3(5f, 5f, 5f));
+
         beautifulMesh2.setPosition(new Vector3(-1f, 0f, -1f));
+        beautifulMesh2.setEulerRotation(new Vector3(0f, 36f, 0f));
+        beautifulMesh2.setScale(new Vector3(4.5f, 2.54f, 1f));
+
+        floor.setScale(new Vector3(100f, 100f, 1f));
+        floor.setEulerRotation(new Vector3(90f, 0f, 0f));
+        floor.setPosition(new Vector3(0f, -10f, 0f));
 
         while(!window.shouldClose()){
             //beautifulMesh2.translate(new Vector3(0.002f, 0, 0));
-            //beautifulMesh.rotate(new Vector3(0.2f, 1f, 0.3f));
-            //beautifulMesh2.rotate(new Vector3(0f, 1f, -0.08f));
+            beautifulMesh2.rotate(new Vector3(1f, 1f, 0f));
+            //beautifulMesh2.rotate(new Vector3(0f, 0.05f, 0f));
             renderer.prepare();
 
             shader.start();
-            renderer.render(beautifulMesh, shader, primaryCamera);
-            renderer.render(beautifulMesh2, shader, primaryCamera);
+            shader.loadPerspective(primaryCamera.getPerspective());
+            shader.loadCamera(primaryCamera.getViewMatrix());
+            renderer.render(beautifulMesh, shader);
+            renderer.render(beautifulMesh2, shader);
+            //renderer.render(floor, shader);
             shader.stop();
 
             window.update();

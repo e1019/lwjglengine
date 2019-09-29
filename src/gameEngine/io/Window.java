@@ -89,12 +89,17 @@ public class Window {
             GLFWVidMode videoMode = GLFW.glfwGetVideoMode(monitor);
             if(fullscreen){
                 GLFW.glfwSetWindowMonitor(window, monitor, 0, 0, videoMode.width(), videoMode.height(), videoMode.refreshRate());
+                GLFW.glfwSwapInterval(1);
             }else{
                 width = 800;
                 height = 600;
                 GLFW.glfwSetWindowMonitor(window, 0, (videoMode.width() - width)/2, (videoMode.height() - height)/2, width, height, 0);
             }
             wasResized = true;
+        }
+
+        if(input.processKey(GLFW.GLFW_KEY_ESCAPE, 1)){
+            input.UnlockMouse();
         }
 
         if(wasResized){

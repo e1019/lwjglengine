@@ -1,5 +1,7 @@
 package gameEngine;
 
+import gameEngine.io.Debug;
+
 public class FPSCounter {
     private long time;
     private float fps;

@@ -27,6 +27,10 @@ class EngineMouseButtonInput extends GLFWMouseButtonCallback {
     public void invoke(long window, int button, int action, int mods) {
         if(window != this.input.tgtWindow) return;
         if((action != GLFW.GLFW_RELEASE) && (action != GLFW.GLFW_PRESS)) return;
+        if(!input.mouseLocked){
+            input.LockMouse();
+            return;
+        }
         this.input.setMouseButton(button, action == GLFW.GLFW_PRESS ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     }
 }
@@ -40,10 +44,19 @@ class EngineMousePosInput extends GLFWCursorPosCallback {
     @Override
     public void invoke(long window, double xpos, double ypos) {
         if(window != this.input.tgtWindow) return;
-
+        if(input.mouseLocked){
+            GLFW.glfwSetCursorPos(input.tgtWindow, 0, 0);
+            this.input.mouseDelta.set((float)xpos, (float)ypos);
+        }else{
+            //this.input.mouseDelta.set((float)xpos - input.mousePos.X, (float)ypos - input.mousePos.Y);
+            this.input.mouseDelta.set(0, 0);
+        }
         this.input.mousePos.set((float)xpos, (float)ypos);
+
     }
 }
+
+
 
 class EngineScrollInput extends GLFWScrollCallback {
     Input input;
@@ -69,7 +82,10 @@ public class Input {
     private GLFWCursorPosCallback pos;
     private GLFWScrollCallback scroll;
 
+    boolean mouseLocked;
+
     Vector2 mousePos;
+    Vector2 mouseDelta;
     Vector2 scrollPos;
 
     long tgtWindow;
@@ -84,6 +100,7 @@ public class Input {
 
         mousePos = new Vector2();
         scrollPos = new Vector2();
+        mouseDelta = new Vector2();
     }
 
     public Vector2 getMousePos(){
@@ -152,5 +169,27 @@ public class Input {
         mouseButtons = null;
         mousePos = null;
         scrollPos = null;
+    }
+
+    public void LockMouse(){
+        mouseLocked = true;
+        GLFW.glfwSetInputMode(tgtWindow, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+    }
+
+    public void UnlockMouse(){
+        mouseLocked = false;
+        GLFW.glfwSetInputMode(tgtWindow, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+    }
+
+    public boolean IsMouseLocked(){
+        return mouseLocked;
+    }
+
+    public Vector2 getMouseDelta(boolean destroy){
+        Vector2 dt = new Vector2(mouseDelta.X, mouseDelta.Y);
+        if(destroy){
+            mouseDelta.set(0, 0);
+        }
+        return dt;
     }
 }

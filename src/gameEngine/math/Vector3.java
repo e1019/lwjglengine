@@ -10,10 +10,16 @@ public class Vector3 {
         this.Z = Z;
     }
 
-    public Vector3(){
+    public Vector3() {
         this.X = 0;
         this.Y = 0;
         this.Z = 0;
+    }
+
+    public Vector3(float l){
+        this.X = l;
+        this.Y = l;
+        this.Z = l;
     }
 
     @Override
@@ -46,6 +52,13 @@ public class Vector3 {
         return new Vector3(X - o.X, Y - o.Y, Z - o.Z);
     }
 
+    public Vector3 div(Vector3 o){
+        return new Vector3(X / o.X, Y / o.Y, Z / o.Z);
+    }
+    public Vector3 mul(Vector3 o){
+        return new Vector3(X * o.X, Y * o.Y, Z * o.Z);
+    }
+
     public void addFrom(Vector3 o){
         X += o.X;
         Y += o.Y;
@@ -73,5 +86,17 @@ public class Vector3 {
         this.X /= length;
         this.Y /= length;
         this.Z /= length;
+    }
+
+    public void clampBoth(Vector3 min_max){
+        float xlim = Math.abs(min_max.X);
+        float ylim = Math.abs(min_max.Y);
+        float zlim = Math.abs(min_max.Z);
+        X = Math.max(-xlim, X);
+        X = Math.min( xlim, X);
+        Y = Math.max(-ylim, Y);
+        Y = Math.min( ylim, Y);
+        Z = Math.max(-zlim, Z);
+        Z = Math.min( zlim, Z);
     }
 }

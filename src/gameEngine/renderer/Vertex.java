@@ -12,4 +12,8 @@ public class Vertex {
         this.position = new Vector3(x, y, z);
         this.uvCoordinate = new Vector2(u, v);
     }
+    public Vertex(float x, float y, float z){
+        this.position = new Vector3(x, y, z);
+        this.uvCoordinate = new Vector2();
+    }
 }

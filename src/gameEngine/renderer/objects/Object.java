@@ -1,18 +1,28 @@
 package gameEngine.renderer.objects;
 
+import gameEngine.io.Debug;
 import gameEngine.math.Matrix4;
 import gameEngine.math.Vector3;
 import gameEngine.math.Vector4;
+import javafx.geometry.Pos;
 
 public abstract class Object {
     private Vector3 Position;
     private Vector3 EulerRotation;
+    private Vector3 Scale_p;
     private Vector3 Scale;
+
+    private static int id = 0;
+
+    private int oid;
 
     public Object(){
         Position = new Vector3();
         EulerRotation = new Vector3();
+        Scale_p = new Vector3(1, 1, 1);
         Scale = new Vector3(1, 1, 1);
+
+        oid = id++;
     }
 
 
@@ -40,6 +50,7 @@ public abstract class Object {
         Scale = scale;
     }
 
+
     public Matrix4 getTransformationMatrix(){
         return Matrix4.createTransformation(Position, EulerRotation, Scale);
     }
@@ -48,15 +59,13 @@ public abstract class Object {
         return Matrix4.createTransformation(new Vector3(), EulerRotation, Scale);
     }
 
+
     public void translate(Vector3 translation) {
         setPosition(Position.add(translation));
     }
 
     public void translateLocally(Vector3 translation) {
-        Vector4 vec4 = new Vector4(translation.X, translation.Y, translation.Z, 1f);
-        vec4 = getRotationMatrix().multiply(vec4);
-
-        setPosition(Position.add(new Vector3(vec4.X, vec4.Y, vec4.Z)));
+        setPosition(Position.add(translation));
     }
 
     public void rotate(Vector3 rotate){
