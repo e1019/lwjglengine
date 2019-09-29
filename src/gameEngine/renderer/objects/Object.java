@@ -1,6 +1,7 @@
 package gameEngine.renderer.objects;
 
 import gameEngine.io.Debug;
+import gameEngine.math.CFrame;
 import gameEngine.math.Matrix4;
 import gameEngine.math.Vector3;
 import gameEngine.math.Vector4;
@@ -52,38 +53,19 @@ public abstract class Object {
 
 
     public Matrix4 getTransformationMatrix(){
-        Matrix4 tmp = new Matrix4();
-        Matrix4 m = new Matrix4();
-        m.toIdentity();
+        CFrame cf = getCFrame();
+        Matrix4 m = cf.toMatrix4();
+        Vector3 lScale = Scale.mul(cf.lookVector());
 
-        Matrix4.Scale(tmp, Scale.X, Scale.Y, Scale.Z);
-        Matrix4.Mul(m, m, tmp);
-        Matrix4.RotateZ(tmp, (float)Math.toRadians(-EulerRotation.Z));
-        Matrix4.Mul(m, m, tmp);
-        Matrix4.RotateX(tmp, (float)Math.toRadians(-EulerRotation.X));
-        Matrix4.Mul(m, m, tmp);
-        Matrix4.RotateY(tmp, (float)Math.toRadians(-EulerRotation.Y));
-        Matrix4.Mul(m, m, tmp);
-        Matrix4.Translate(tmp, Position.X, Position.Y, Position.Z);
-        Matrix4.Mul(m, m, tmp);
+
+        //m = m.multiply(Matrix4.scale(lScale.X, lScale.Y, lScale.Z));
 
         return m;
     }
 
-    public Matrix4 getRotationMatrix(){
-        Matrix4 tmp = new Matrix4();
-        Matrix4 m = new Matrix4();
-        m.toIdentity();
 
-
-        Matrix4.RotateZ(tmp, (float)Math.toRadians(-EulerRotation.Z));
-        Matrix4.Mul(m, m, tmp);
-        Matrix4.RotateX(tmp, (float)Math.toRadians(-EulerRotation.X));
-        Matrix4.Mul(m, m, tmp);
-        Matrix4.RotateY(tmp, (float)Math.toRadians(-EulerRotation.Y));
-        Matrix4.Mul(m, m, tmp);
-
-        return m;
+    public CFrame getCFrame(){
+        return ( new CFrame(getPosition()) ).mul(CFrame.Anglesd(getEulerRotation()));
     }
 
     public void translate(Vector3 translation) {
@@ -91,7 +73,19 @@ public abstract class Object {
     }
 
     public void translateLocally(Vector3 translation) {
-        setPosition(Position.add(translation));
+        /*
+        Vector3 translatedZ = getCFrame().lookVector().mul(new Vector3(translation.Z));
+        Vector3 translatedY = getCFrame().upVector().mul(new Vector3(translation.Y));
+        Vector3 translatedX = getCFrame().rightVector().mul(new Vector3(translation.X));
+
+        translate(translatedZ.add(translatedY).add(translatedX));
+
+         */
+
+
+
+        CFrame rot = CFrame.Anglesd(getEulerRotation());
+        translate(rot.mul(new CFrame(translation)).getTranslation());
     }
 
     public void rotate(Vector3 rotate){

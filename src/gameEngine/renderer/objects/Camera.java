@@ -2,6 +2,7 @@ package gameEngine.renderer.objects;
 
 import gameEngine.io.Debug;
 import gameEngine.io.Window;
+import gameEngine.math.CFrame;
 import gameEngine.math.Matrix4;
 import gameEngine.math.Vector3;
 
@@ -25,25 +26,23 @@ public class Camera extends Object {
     }
 
     public Matrix4 getPerspective(){
-        return Matrix4.fromPerspective(FOV, (tgtWindow.getWidth()*1f) / (tgtWindow.getHeight()*1f), minPlane, maxPlane);
+        return Matrix4.perspective(FOV, (tgtWindow.getWidth()*1f) / (tgtWindow.getHeight()*1f), minPlane, maxPlane);
     }
 
     public Matrix4 getViewMatrix(){
 
-        Matrix4 tmp = new Matrix4();
-        Matrix4 viewMatrix = new Matrix4();
-        viewMatrix.toIdentity();
+        CFrame view = new CFrame();
 
-        Matrix4.RotateY(tmp, (float) Math.toRadians(getEulerRotation().Y));
-        Matrix4.Mul(viewMatrix, viewMatrix, tmp);
 
-        Matrix4.RotateX(tmp, (float) Math.toRadians(getEulerRotation().X));
-        Matrix4.Mul(viewMatrix, viewMatrix, tmp);
+        Debug.print("Euler rotation: " + getEulerRotation());
 
-        Matrix4.Translate(tmp, getPosition().X, getPosition().Y, getPosition().Z);
-        Matrix4.Mul(viewMatrix, viewMatrix, tmp);
+        view = view.mul(CFrame.Anglesd(getEulerRotation()));
+        view = view.mul(new CFrame(getPosition()));
 
-        return viewMatrix;
+        Debug.print("Lookvector: " + view.lookVector());
+
+
+        return view.toMatrix4();
     }
 
     public float getFOV() {

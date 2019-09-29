@@ -10,7 +10,8 @@ uniform mat4 perspective;
 uniform mat4 camera;
 
 void main(void){
-    gl_Position = perspective * camera * transformation * vec4(position, 2);
+    mat4 mvp = perspective * camera * transformation;
+    gl_Position = mvp * vec4(position, 1.0);
 
     uvCoordsOut = uvCoords;
 }

@@ -89,7 +89,6 @@ public class Main {
         Camera primaryCamera = new Camera(70f);
         primaryCamera.setWindow(window);
 
-        beautifulMesh.setPosition(new Vector3(5f, 5f, 5f));
 
         beautifulMesh2.setPosition(new Vector3(-1f, 0f, -1f));
         beautifulMesh2.setEulerRotation(new Vector3(0f, 36f, 0f));
@@ -101,8 +100,10 @@ public class Main {
 
         while(!window.shouldClose()){
             //beautifulMesh2.translate(new Vector3(0.002f, 0, 0));
-            beautifulMesh2.rotate(new Vector3(1f, 1f, 0f));
-            //beautifulMesh2.rotate(new Vector3(0f, 0.05f, 0f));
+            //beautifulMesh2.rotate(new Vector3(1f, 1f, 0f));
+            beautifulMesh2.rotate(new Vector3(0f, 0.05f, 0f));
+
+
             renderer.prepare();
 
             shader.start();

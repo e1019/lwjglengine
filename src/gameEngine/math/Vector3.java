@@ -81,11 +81,9 @@ public class Vector3 {
         return (float)Math.sqrt(X * X + Y * Y + Z * Z);
     }
 
-    public void normalize(){
+    public Vector3 normalize(){
         float length = length();
-        this.X /= length;
-        this.Y /= length;
-        this.Z /= length;
+        return new Vector3(X/length, Y/length, Z/length);
     }
 
     public void clampBoth(Vector3 min_max){
