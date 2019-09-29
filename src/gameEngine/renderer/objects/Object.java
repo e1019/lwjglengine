@@ -2,7 +2,6 @@ package gameEngine.renderer.objects;
 
 import gameEngine.math.Matrix4;
 import gameEngine.math.Vector3;
-import javafx.geometry.Pos;
 
 public abstract class Object {
     private Vector3 Position;
