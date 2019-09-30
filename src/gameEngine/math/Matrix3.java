@@ -23,6 +23,7 @@ package gameEngine.math;/*
  */
 
 
+import gameEngine.io.Debug;
 import gameEngine.math.Vector3;
 
 import java.nio.FloatBuffer;
@@ -311,5 +312,60 @@ public class Matrix3 {
         Matrix3 kZMat = new Matrix3(fCos, -fSin, 0.0f, fSin, fCos, 0.0f, 0.0f, 0.0f, 1.0f);
 
         return kXMat.multiply(kYMat.multiply(kZMat));
+    }
+
+
+    public Vector3 toEulerAnglesZYX(){
+
+
+        Vector3 result = new Vector3();
+
+        //https://www.geometrictools.com/Documentation/EulerAngles.pdf
+        if(m20 < +1){
+            if(m20 > -1){
+                result.Y = (float)Math.asin(-m20);
+                result.Z = (float)Math.atan2(m10, m00);
+                result.X = (float)Math.atan2(m21, m22);
+            }else{
+                result.Y = (float)Math.PI/2;
+                result.Z = (float)-Math.atan2(-m12, m11);
+                result.X = 0.f;
+            }
+        }else{
+            result.Y = (float)-Math.PI/2;
+            result.Z = (float)Math.atan2(-m12, m11);
+            result.X = 0.f;
+        }
+
+        result.toDeg();
+
+        return result;
+    }
+
+    public Vector3 toEulerAnglesXYZ(){
+
+
+        Vector3 result = new Vector3();
+
+        //https://www.geometrictools.com/Documentation/EulerAngles.pdf
+        if(m20 < +1){
+            if(m20 > -1){
+                result.Y = (float)Math.asin(m02);
+                result.X = (float)Math.atan2(-m12, m22);
+                result.Z = (float)Math.atan2(-m01, m00);
+            }else{
+                result.Y = (float)-Math.PI/2;
+                result.X = (float)-Math.atan2(m10, m11);
+                result.Z = 0.f;
+            }
+        }else{
+            result.Y = (float)Math.PI/2;
+            result.X = (float)Math.atan2(m10, m11);
+            result.Z = 0.f;
+        }
+
+        result.toDeg();
+
+        return result;
     }
 }

@@ -30,19 +30,8 @@ public class Camera extends Object {
     }
 
     public Matrix4 getViewMatrix(){
-
-        CFrame view = new CFrame();
-
-
-        Debug.print("Euler rotation: " + getEulerRotation());
-
-        view = view.mul(CFrame.Anglesd(getEulerRotation()));
-        view = view.mul(new CFrame(getPosition()));
-
-        Debug.print("Lookvector: " + view.lookVector());
-
-
-        return view.toMatrix4();
+        CFrame cf = getCFrame();
+        return getCFrame().inverse().toMatrix4();
     }
 
     public float getFOV() {

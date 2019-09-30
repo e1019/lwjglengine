@@ -8,9 +8,9 @@ import gameEngine.math.Vector4;
 import javafx.geometry.Pos;
 
 public abstract class Object {
-    private Vector3 Position;
-    private Vector3 EulerRotation;
-    private Vector3 Scale_p;
+
+    private CFrame cFrame;
+
     private Vector3 Scale;
 
     private static int id = 0;
@@ -18,29 +18,28 @@ public abstract class Object {
     private int oid;
 
     public Object(){
-        Position = new Vector3();
-        EulerRotation = new Vector3();
-        Scale_p = new Vector3(1, 1, 1);
         Scale = new Vector3(1, 1, 1);
+
+        cFrame = new CFrame();
 
         oid = id++;
     }
 
 
     public Vector3 getPosition() {
-        return Position;
+        return cFrame.getTranslation();
     }
 
     public void setPosition(Vector3 position) {
-        Position = position;
+        cFrame = new CFrame(cFrame.getRotation(), position);
     }
 
     public Vector3 getEulerRotation() {
-        return EulerRotation;
+        return cFrame.toEulerAnglesXYZ();
     }
 
     public void setEulerRotation(Vector3 eulerRotation) {
-        EulerRotation = eulerRotation;
+        cFrame = new CFrame(CFrame.Anglesd(eulerRotation).getRotation(), cFrame.getTranslation());
     }
 
     public Vector3 getScale() {
@@ -51,44 +50,50 @@ public abstract class Object {
         Scale = scale;
     }
 
+    public void scale(Vector3 scale){
+        Scale = Scale.add(scale);
+    }
 
     public Matrix4 getTransformationMatrix(){
         CFrame cf = getCFrame();
         Matrix4 m = cf.toMatrix4();
-        Vector3 lScale = Scale.mul(cf.lookVector());
 
+        CFrame rot = new CFrame(cf.getRotation());
 
-        //m = m.multiply(Matrix4.scale(lScale.X, lScale.Y, lScale.Z));
+        rot = rot.mul(new CFrame(Scale));
+
+        Vector3 sc_l = Scale;//rot.getTranslation();
+
+        m = m.multiply(Matrix4.scale(sc_l.X, sc_l.Y, sc_l.Z));
+
 
         return m;
     }
 
 
+
+
     public CFrame getCFrame(){
-        return ( new CFrame(getPosition()) ).mul(CFrame.Anglesd(getEulerRotation()));
+        return this.cFrame;
+    }
+
+    public void setCFrame(CFrame to){
+        this.cFrame = to;
     }
 
     public void translate(Vector3 translation) {
-        setPosition(Position.add(translation));
+        setPosition(getPosition().add(translation));
     }
 
     public void translateLocally(Vector3 translation) {
-        /*
-        Vector3 translatedZ = getCFrame().lookVector().mul(new Vector3(translation.Z));
-        Vector3 translatedY = getCFrame().upVector().mul(new Vector3(translation.Y));
-        Vector3 translatedX = getCFrame().rightVector().mul(new Vector3(translation.X));
+        CFrame rot = getCFrame();
 
-        translate(translatedZ.add(translatedY).add(translatedX));
+        rot = rot.mul(new CFrame(translation));
 
-         */
-
-
-
-        CFrame rot = CFrame.Anglesd(getEulerRotation());
-        translate(rot.mul(new CFrame(translation)).getTranslation());
+        setPosition(rot.getTranslation());
     }
 
     public void rotate(Vector3 rotate){
-        setEulerRotation(EulerRotation.add(rotate));
+        cFrame = cFrame.mul(CFrame.Anglesd(rotate));
     }
 }

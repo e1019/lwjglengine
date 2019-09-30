@@ -70,11 +70,11 @@ public class CFrame {
 
 
     public Vector3 lookVector(){
-        return new Vector3(-rotation.m02, -rotation.m12, -rotation.m22);
+        return new Vector3(rotation.m01, rotation.m11, rotation.m21);
     }
 
     public Vector3 upVector(){
-        return new Vector3(rotation.m01, rotation.m11, rotation.m21);
+        return new Vector3(rotation.m02, rotation.m12, rotation.m22);
     }
 
     public Vector3 rightVector(){
@@ -117,5 +117,13 @@ public class CFrame {
                 ),
                 new Vector3()
         );
+    }
+
+    public Matrix3 getRotation(){
+        return this.rotation;
+    }
+
+    public Vector3 toEulerAnglesXYZ(){
+        return this.rotation.toEulerAnglesXYZ();
     }
 }

@@ -97,4 +97,21 @@ public class Vector3 {
         Z = Math.max(-zlim, Z);
         Z = Math.min( zlim, Z);
     }
+
+    public Vector3 negate(){
+        return new Vector3(-X, -Y, -Z);
+    }
+
+
+    public void toRad(){
+        this.X = (float)Math.toRadians(X);
+        this.Y = (float)Math.toRadians(Y);
+        this.Z = (float)Math.toRadians(Z);
+    }
+
+    public void toDeg(){
+        this.X = (float)Math.toDegrees(X);
+        this.Y = (float)Math.toDegrees(Y);
+        this.Z = (float)Math.toDegrees(Z);
+    }
 }
